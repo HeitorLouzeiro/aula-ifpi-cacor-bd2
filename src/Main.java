@@ -1,14 +1,19 @@
-import DAO.FuncionarioDAO;
-import bancoDeDados.DriverMySQL;
-import model.Funcionario;
+// import DAO.FuncionarioDAO;
+// import bancoDeDados.DataBase;
+// import model.Funcionario;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+// import java.math.BigDecimal;
+// import java.sql.Connection;
+// import java.sql.PreparedStatement;
+// import java.sql.ResultSet;
+// import java.time.LocalDate;
+// import java.time.LocalDateTime;
+// import java.time.format.DateTimeFormatter;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+import DAO.FuncionarioDAO;
 
 /**
  * 1 -> Implemente a função de listar para que retorne todos os funcionários cadastrados.
@@ -22,50 +27,23 @@ import java.time.format.DateTimeFormatter;
  */
 
 public class Main {
-    public static void main(String[] args) {
+    /**
+     * @param args
+     * @throws IOException 
+     * @throws SQLException 
+     */
+    public static void main(String[] args) throws SQLException, IOException {
+        listarFuncionarios();
+    }
 
-
-        // INSERIR FUNCIONARIO
-
-        Connection con = DriverMySQL.getConnection();
-        PreparedStatement ps = null;
-
+    private static void listarFuncionarios() throws SQLException, IOException {
         FuncionarioDAO funcionarioDAO = new FuncionarioDAO();
-        Funcionario funcionario = new Funcionario();
-
-        funcionario.setNome("TESTE");
-        funcionario.setSalario(new BigDecimal("2500.50"));
-        funcionario.setDataNasc(LocalDate
-                .parse("01/07/1992",
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        funcionario.setDataRegistro(LocalDateTime.now());
-        funcionario.setAtivo(true);
-
-        //funcionarioDAO.inserir(funcionario);
-
-        // LISTAR TODOS OS FUNCIONARIOS
-
-        try (PreparedStatement pstmt = con.prepareStatement("SELECT * FROM funcionarios")) {
-
-            ResultSet rs = pstmt.executeQuery();
-            while(rs.next()) {
-
-                var dadosFuncionario = "ID: %s \t NOME: %s \t DATA NASC.: %s \t SALÁRIO: %s \t DT. REGISTRO: %s \t ATIVO: %s"
-                        .formatted(
-                                rs.getInt("id"),
-                                rs.getString("nome"),
-                                rs.getDate("data_nasc"),
-                                rs.getBigDecimal("salario"),
-                                rs.getTimestamp("data_registro"),
-                                rs.getBoolean("cadastro_ativo")
-                        );
-
-                System.out.println(dadosFuncionario);
-            }
-
+        try {
+            System.out.println("listando funcionarios.");
+            funcionarioDAO.getFuncionarios();
+            
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
-
     }
 }
